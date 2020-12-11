@@ -1,0 +1,10 @@
+# QualifierItemContent
+
+## Properties
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**type** | **str** | The type of this qualifer | [optional] 
+**url** | **list[str]** |  | [optional] 
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
