@@ -1,6 +1,6 @@
 # pysbml4j.NetworksApi
 
-All URIs are relative to *https://virtserver.swaggerhub.com/tiede/sbml4j/1.1.4*
+All URIs are relative to *https://virtserver.swaggerhub.com/tiede/sbml4j/1.1.5*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -28,12 +28,8 @@ import pysbml4j
 from pysbml4j.rest import ApiException
 from pprint import pprint
 
-# Configure OAuth2 access token for authorization: network_auth
-configuration = pysbml4j.Configuration()
-configuration.access_token = 'YOUR_ACCESS_TOKEN'
-
 # create an instance of the API class
-api_instance = pysbml4j.NetworksApi(pysbml4j.ApiClient(configuration))
+api_instance = pysbml4j.NetworksApi()
 body = pysbml4j.AnnotationItem() # AnnotationItem | The fields of the AnnotationItem are used to create annotations in a network as follows:
 
 Must provide 
@@ -104,7 +100,7 @@ Fields related to relations:
 
 ### Authorization
 
-[network_auth](../README.md#network_auth)
+No authorization required
 
 ### HTTP request headers
 
@@ -176,12 +172,8 @@ import pysbml4j
 from pysbml4j.rest import ApiException
 from pprint import pprint
 
-# Configure OAuth2 access token for authorization: network_auth
-configuration = pysbml4j.Configuration()
-configuration.access_token = 'YOUR_ACCESS_TOKEN'
-
 # create an instance of the API class
-api_instance = pysbml4j.NetworksApi(pysbml4j.ApiClient(configuration))
+api_instance = pysbml4j.NetworksApi()
 user = 'user_example' # str | The user which requests the creation
 uuid = '38400000-8cf0-11bd-b23e-10b96e4ef00d' # str | The UUID of the parent network to be copied
 
@@ -206,7 +198,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[network_auth](../README.md#network_auth)
+No authorization required
 
 ### HTTP request headers
 
@@ -228,12 +220,8 @@ import pysbml4j
 from pysbml4j.rest import ApiException
 from pprint import pprint
 
-# Configure OAuth2 access token for authorization: network_auth
-configuration = pysbml4j.Configuration()
-configuration.access_token = 'YOUR_ACCESS_TOKEN'
-
 # create an instance of the API class
-api_instance = pysbml4j.NetworksApi(pysbml4j.ApiClient(configuration))
+api_instance = pysbml4j.NetworksApi()
 user = 'user_example' # str | The user which requests deletion of their network
 uuid = '38400000-8cf0-11bd-b23e-10b96e4ef00d' # str | The UUID of the network to delete
 
@@ -257,7 +245,7 @@ void (empty response body)
 
 ### Authorization
 
-[network_auth](../README.md#network_auth)
+No authorization required
 
 ### HTTP request headers
 
@@ -279,12 +267,8 @@ import pysbml4j
 from pysbml4j.rest import ApiException
 from pprint import pprint
 
-# Configure OAuth2 access token for authorization: network_auth
-configuration = pysbml4j.Configuration()
-configuration.access_token = 'YOUR_ACCESS_TOKEN'
-
 # create an instance of the API class
-api_instance = pysbml4j.NetworksApi(pysbml4j.ApiClient(configuration))
+api_instance = pysbml4j.NetworksApi()
 body = pysbml4j.FilterOptions() # FilterOptions | The filterOptions to be used in the step upon creation.
 
 - NodeSymbols: Only nodes listed here can be part of the network (and if they match given nodeTypes)
@@ -333,7 +317,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[network_auth](../README.md#network_auth)
+No authorization required
 
 ### HTTP request headers
 
@@ -355,12 +339,8 @@ import pysbml4j
 from pysbml4j.rest import ApiException
 from pprint import pprint
 
-# Configure OAuth2 access token for authorization: network_auth
-configuration = pysbml4j.Configuration()
-configuration.access_token = 'YOUR_ACCESS_TOKEN'
-
 # create an instance of the API class
-api_instance = pysbml4j.NetworksApi(pysbml4j.ApiClient(configuration))
+api_instance = pysbml4j.NetworksApi()
 user = 'user_example' # str | 
 uuid = '38400000-8cf0-11bd-b23e-10b96e4ef00d' # str | The UUID of the network that serves as a basis for this context
 genes = 'genes_example' # str | 
@@ -397,7 +377,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[network_auth](../README.md#network_auth)
+No authorization required
 
 ### HTTP request headers
 
@@ -419,12 +399,8 @@ import pysbml4j
 from pysbml4j.rest import ApiException
 from pprint import pprint
 
-# Configure OAuth2 access token for authorization: network_auth
-configuration = pysbml4j.Configuration()
-configuration.access_token = 'YOUR_ACCESS_TOKEN'
-
 # create an instance of the API class
-api_instance = pysbml4j.NetworksApi(pysbml4j.ApiClient(configuration))
+api_instance = pysbml4j.NetworksApi()
 user = 'user_example' # str | The user which requests the creation
 uuid = '38400000-8cf0-11bd-b23e-10b96e4ef00d' # str | The UUID of the network to get
 directed = false # bool | Boolean flag wether the resulting network-graph should be directed  (optional) (default to false)
@@ -451,7 +427,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[network_auth](../README.md#network_auth)
+No authorization required
 
 ### HTTP request headers
 
@@ -473,12 +449,8 @@ import pysbml4j
 from pysbml4j.rest import ApiException
 from pprint import pprint
 
-# Configure OAuth2 access token for authorization: network_auth
-configuration = pysbml4j.Configuration()
-configuration.access_token = 'YOUR_ACCESS_TOKEN'
-
 # create an instance of the API class
-api_instance = pysbml4j.NetworksApi(pysbml4j.ApiClient(configuration))
+api_instance = pysbml4j.NetworksApi()
 user = 'user_example' # str | 
 uuid = '38400000-8cf0-11bd-b23e-10b96e4ef00d' # str | The network UUID for which the networkOptions are to be fetched
 
@@ -503,7 +475,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[network_auth](../README.md#network_auth)
+No authorization required
 
 ### HTTP request headers
 
@@ -525,12 +497,8 @@ import pysbml4j
 from pysbml4j.rest import ApiException
 from pprint import pprint
 
-# Configure OAuth2 access token for authorization: network_auth
-configuration = pysbml4j.Configuration()
-configuration.access_token = 'YOUR_ACCESS_TOKEN'
-
 # create an instance of the API class
-api_instance = pysbml4j.NetworksApi(pysbml4j.ApiClient(configuration))
+api_instance = pysbml4j.NetworksApi()
 user = 'user_example' # str | The user which requests listing of their networks
 
 try:
@@ -553,7 +521,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[network_auth](../README.md#network_auth)
+No authorization required
 
 ### HTTP request headers
 

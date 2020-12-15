@@ -1,6 +1,6 @@
 # pysbml4j.AnalysisApi
 
-All URIs are relative to *https://virtserver.swaggerhub.com/tiede/sbml4j/1.1.4*
+All URIs are relative to *https://virtserver.swaggerhub.com/tiede/sbml4j/1.1.5*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -67,12 +67,8 @@ import pysbml4j
 from pysbml4j.rest import ApiException
 from pprint import pprint
 
-# Configure OAuth2 access token for authorization: network_auth
-configuration = pysbml4j.Configuration()
-configuration.access_token = 'YOUR_ACCESS_TOKEN'
-
 # create an instance of the API class
-api_instance = pysbml4j.AnalysisApi(pysbml4j.ApiClient(configuration))
+api_instance = pysbml4j.AnalysisApi()
 user = 'user_example' # str | The user which requests the creation
 gene_symbols = ['gene_symbols_example'] # list[str] | The geneSymbols for which the analysis should be fetched
 uuid = '38400000-8cf0-11bd-b23e-10b96e4ef00d' # str | The UUID of the parent network to derive a new network from, if omitted the full model will be used (optional)
@@ -101,7 +97,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[network_auth](../README.md#network_auth)
+No authorization required
 
 ### HTTP request headers
 

@@ -11,7 +11,6 @@ Name | Type | Description | Notes
 **node_types** | **list[str]** |  | [optional] 
 **relation_types** | **list[str]** |  | [optional] 
 **network_mapping_type** | **str** | One of: REGULATORY, SIGNALLING, PPI, METABOLIC, PATHWAYMAPPING | [optional] 
-**links** | [**list[Link]**](Link.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

@@ -1,6 +1,6 @@
 # pysbml4j.ConvenienceApi
 
-All URIs are relative to *https://virtserver.swaggerhub.com/tiede/sbml4j/1.1.4*
+All URIs are relative to *https://virtserver.swaggerhub.com/tiede/sbml4j/1.1.5*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -74,12 +74,8 @@ import pysbml4j
 from pysbml4j.rest import ApiException
 from pprint import pprint
 
-# Configure OAuth2 access token for authorization: network_auth
-configuration = pysbml4j.Configuration()
-configuration.access_token = 'YOUR_ACCESS_TOKEN'
-
 # create an instance of the API class
-api_instance = pysbml4j.ConvenienceApi(pysbml4j.ApiClient(configuration))
+api_instance = pysbml4j.ConvenienceApi()
 user = 'user_example' # str | The user which requests the creation
 name = 'name_example' # str | The network name to get
 
@@ -104,7 +100,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[network_auth](../README.md#network_auth)
+No authorization required
 
 ### HTTP request headers
 

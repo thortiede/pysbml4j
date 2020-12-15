@@ -1,6 +1,6 @@
 # pysbml4j.MydrugApi
 
-All URIs are relative to *https://virtserver.swaggerhub.com/tiede/sbml4j/1.1.4*
+All URIs are relative to *https://virtserver.swaggerhub.com/tiede/sbml4j/1.1.5*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
