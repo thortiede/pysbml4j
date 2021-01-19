@@ -178,7 +178,7 @@ class RESTClientObject(object):
                     # overwritten.
                     logger.debug("Are we actually getting the correct content-type: {}".format(headers['Content-Type']))
                     del headers['Content-Type']
-                    logger.debug("method: {}, url: {}, fields: {}, preload_content: {}, headers: {}".format(method, url, post_params, preload_content, headers))
+                    logger.debug("method: {}, url: {}, fields: {}, preload_content: {}, headers: {}".format(method, url, post_params, _preload_content, headers))
                     r = self.pool_manager.request(
                         method, url,
                         fields=post_params,
