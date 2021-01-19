@@ -135,10 +135,10 @@ class SbmlApi(object):
         if 'files' in params:
             form_params.append(('files', params['files']))  # noqa: E501
             collection_formats['files'] = 'multi'  # noqa: E501
-            for localfilename in params['files']:
-                logging.debug('The filename is: {}, and the path is {}'.format(localfilename.split('/')[-1], localfilename))
-                local_var_files[localfilename.split('/')[-1]] = localfilename
-
+            #for localfilename in params['files']:
+                #logging.debug('The filename is: {}, and the path is {}'.format(localfilename.split('/')[-1], localfilename))
+                #local_var_files[localfilename.split('/')[-1]] = localfilename
+        logger.debug("form_params are {}".format(form_params))
         body_params = None
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept(
