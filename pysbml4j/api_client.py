@@ -133,9 +133,12 @@ class ApiClient(object):
         if post_params or files:
             logging.debug("Pre processing files for POST request")
             post_params = self.prepare_post_parameters(post_params, files)
+            logging.debug("post_params after prep: {}".format(post_params))
             post_params = self.sanitize_for_serialization(post_params)
+            logging.debug("post_params after sanitize_for_serialization: {}".format(post_params))
             post_params = self.parameters_to_tuples(post_params,
                                                     collection_formats)
+            logging.debug("post_params after parameters_to_tuples: {}".format(post_params))
 
         # auth setting
         self.update_params_for_auth(header_params, query_params, auth_settings)
