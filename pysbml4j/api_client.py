@@ -17,7 +17,7 @@ from multiprocessing.pool import ThreadPool
 import os
 import re
 import tempfile
-import Logging
+import logging
 # python 2 and python 3 compatibility library
 import six
 from six.moves.urllib.parse import quote
