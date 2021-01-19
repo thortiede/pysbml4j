@@ -133,6 +133,7 @@ class SbmlApi(object):
         form_params = []
         local_var_files = {}
         logging.debug('This is a log message.')
+        print("This is print again")
         if 'files' in params:
             form_params.append(('files', params['files']))  # noqa: E501
             collection_formats['files'] = 'multi'  # noqa: E501
