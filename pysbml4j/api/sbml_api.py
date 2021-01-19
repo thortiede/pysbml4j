@@ -13,6 +13,7 @@
 from __future__ import absolute_import
 
 import re  # noqa: F401
+import logging
 
 # python 2 and python 3 compatibility library
 import six
@@ -26,6 +27,7 @@ class SbmlApi(object):
     Do not edit the class manually.
     Ref: https://github.com/swagger-api/swagger-codegen
     """
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
     def __init__(self, api_client=None):
         if api_client is None:
@@ -130,12 +132,12 @@ class SbmlApi(object):
 
         form_params = []
         local_var_files = {}
-        print("A test here")
+        logging.debug('This is a log message.')
         if 'files' in params:
             form_params.append(('files', params['files']))  # noqa: E501
             collection_formats['files'] = 'multi'  # noqa: E501
             for localfilename in params['files']:
-                print(localfilename)
+                logging.debug('The filename is: {}'.format(localfilename)
                 local_var_files[localfilename.split('/')[-1]] = localfilename
 
         body_params = None
