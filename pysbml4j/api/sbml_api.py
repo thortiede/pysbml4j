@@ -130,6 +130,7 @@ class SbmlApi(object):
 
         form_params = []
         local_var_files = {}
+        print("A test here")
         if 'files' in params:
             form_params.append(('files', params['files']))  # noqa: E501
             collection_formats['files'] = 'multi'  # noqa: E501
