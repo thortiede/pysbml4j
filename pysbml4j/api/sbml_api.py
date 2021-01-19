@@ -133,6 +133,8 @@ class SbmlApi(object):
         if 'files' in params:
             form_params.append(('files', params['files']))  # noqa: E501
             collection_formats['files'] = 'multi'  # noqa: E501
+            for localfilename in params['files']:
+                local_var_files[localfilename.split('/')[-1]] = localfilename
 
         body_params = None
         # HTTP header `Accept`
