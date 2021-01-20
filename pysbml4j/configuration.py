@@ -74,7 +74,7 @@ class Configuration(six.with_metaclass(TypeWithDefault, object)):
         # Debug file location
         self.logger_file = None
         # Debug switch
-        self.debug = True
+        self.debug = False
 
         # SSL/TLS verification
         # Set this to false to skip verifying SSL certificate when calling API
@@ -240,5 +240,5 @@ class Configuration(six.with_metaclass(TypeWithDefault, object)):
                "OS: {env}\n"\
                "Python Version: {pyversion}\n"\
                "Version of the API: 1.1.5\n"\
-               "SDK Package Version: 1.0.1".\
+               "SDK Package Version: 1.0.13".\
                format(env=sys.platform, pyversion=sys.version)

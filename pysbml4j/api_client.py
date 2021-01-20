@@ -17,7 +17,7 @@ from multiprocessing.pool import ThreadPool
 import os
 import re
 import tempfile
-import logging
+
 # python 2 and python 3 compatibility library
 import six
 from six.moves.urllib.parse import quote
@@ -46,8 +46,6 @@ class ApiClient(object):
     :param cookie: a cookie to include in the header when making calls
         to the API
     """
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-
 
     PRIMITIVE_TYPES = (float, bool, bytes, six.text_type) + six.integer_types
     NATIVE_TYPES_MAPPING = {
@@ -74,7 +72,7 @@ class ApiClient(object):
             self.default_headers[header_name] = header_value
         self.cookie = cookie
         # Set default User-Agent.
-        self.user_agent = 'Swagger-Codegen/1.0.1/python'
+        self.user_agent = 'Swagger-Codegen/1.0.13/python'
 
     def __del__(self):
         self.pool.close()
@@ -131,14 +129,10 @@ class ApiClient(object):
 
         # post parameters
         if post_params or files:
-            logging.debug("Pre processing files for POST request")
             post_params = self.prepare_post_parameters(post_params, files)
-            logging.debug("post_params after prep: {}".format(post_params))
             post_params = self.sanitize_for_serialization(post_params)
-            logging.debug("post_params after sanitize_for_serialization: {}".format(post_params))
             post_params = self.parameters_to_tuples(post_params,
                                                     collection_formats)
-            logging.debug("post_params after parameters_to_tuples: {}".format(post_params))
 
         # auth setting
         self.update_params_for_auth(header_params, query_params, auth_settings)
@@ -444,9 +438,7 @@ class ApiClient(object):
                 if not v:
                     continue
                 file_names = v if type(v) is list else [v]
-                logging.debug("The file_names for the request are {}".format(file_names))
                 for n in file_names:
-                    logging.debug("Opening file {}".format(n))
                     with open(n, 'rb') as f:
                         filename = os.path.basename(f.name)
                         filedata = f.read()
