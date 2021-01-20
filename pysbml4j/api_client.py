@@ -17,6 +17,7 @@ from multiprocessing.pool import ThreadPool
 import os
 import re
 import tempfile
+import logging
 
 # python 2 and python 3 compatibility library
 import six
@@ -26,6 +27,7 @@ from pysbml4j.configuration import Configuration
 import pysbml4j.models
 from pysbml4j import rest
 
+logger = logging.getLogger(__name__)
 
 class ApiClient(object):
     """Generic API client for Swagger client library builds.
@@ -144,6 +146,7 @@ class ApiClient(object):
         # request url
         url = self.configuration.host + resource_path
 
+        logger.debug("The request being made is: {} {} with query_params: {}; header_params: {}; post_params: {}; body: {}".format(method, url, query_params, header_params, post_params, body))
         # perform request and return response
         response_data = self.request(
             method, url, query_params=query_params, headers=header_params,
