@@ -85,8 +85,8 @@ class Network(object):
     # Create a copy of a network
     # The network will be identical to the given network
     # except getting a new name and a new uuid
-    def copy(self, newNetworkName=None, doPrefixName=False, doSuffixName=None):
-        dict_with_new_info = self.sbml4jApi.copyNetwork(self.uuid, newNetworkName, doPrefixName, doSuffixName)
+    def copy(self, networkname=None, doPrefixName=False, doSuffixName=None):
+        dict_with_new_info = self.sbml4jApi.copyNetwork(self.uuid, networkname, doPrefixName, doSuffixName)
         self.updateInfo(dict_with_new_info)
     
     ############
@@ -95,8 +95,8 @@ class Network(object):
     # all additional columns get added as annotations to the nodes
     # The given dataName will be added as Label to the gene-node and can be used in context searches
     # A name can be given to the resulting network, if ommited the old network name will prefixed with "Added_{dataName}_to_"
-    def addCsvData(self, csvFile, dataName, newNetworkName=None, doPrefixName=None, doDerive=None):
-        dict_with_new_info = self.sbml4jApi.addCsvDataToNetwork(self.uuid, csvFile, dataName, newNetworkName, doPrefixName, doDerive)
+    def addCsvData(self, csvFile, dataName, networkname=None, doPrefixName=None, doDerive=None):
+        dict_with_new_info = self.sbml4jApi.addCsvDataToNetwork(self.uuid, csvFile, dataName, networkname, doPrefixName, doDerive)
         self.updateInfo(dict_with_new_info)
         
     ############
@@ -110,9 +110,10 @@ class Network(object):
                       direction=None, 
                       minSize=None, 
                       maxSize=None, 
-                      newNetworkName=None,
-                      doPrefixName=None):
-        dict_with_new_info = self.sbml4jApi.postContext(self.uuid, geneList, terminateAt, direction, minSize, maxSize, newNetworkName, doPrefixName)
+                      networkname=None,
+                      doPrefixName=None,
+                      weightPropertyName=None):
+        dict_with_new_info = self.sbml4jApi.postContext(self.uuid, geneList, terminateAt, direction, minSize, maxSize, networkname, doPrefixName, weightPropertyName)
         self.updateInfo(dict_with_new_info)
    
     ############
@@ -120,9 +121,9 @@ class Network(object):
     # There are two ways to generate a context
     # GET's a context from a network
     #     Searches the context and returns it as GraphML, leaving the network unchanged      
-    def getContext(self, geneList, terminateAt=None, direction=None, minSize=None, maxSize=None, directed=None, coding=None):
+    def getContext(self, geneList, terminateAt=None, direction=None, minSize=None, maxSize=None, directed=None, coding=None, weightPropertyName=None):
         try:
-            resp = self.sbml4jApi.getContext(self.uuid, geneList, terminateAt, direction, minSize, maxSize, directed)
+            resp = self.sbml4jApi.getContext(self.uuid, geneList, terminateAt, direction, minSize, maxSize, directed, weightPropertyName)
         except Exception as e:
             print(e)
             return None # Do we actually want to break here and terminate execution?
@@ -138,10 +139,9 @@ class Network(object):
     # which does calculate the shortest path for the two genes
     # and a neighborhood around the genes, whose size can be given.
     # With a size of zero, it results in only the shortest path between the two genes
-    # TODO: ADD weight parameter
-    def shortestPath(self, gene1, gene2, directed=None, coding=None):
+    def shortestPath(self, gene1, gene2, directed=None, weightPropertyName=None, coding=None):
         try:
-            resp = self.sbml4jApi.getContext(uuid=self.uuid, geneList=[gene1, gene2], minSize=0, maxSize=0, directed=directed)
+            resp = self.sbml4jApi.getContext(uuid=self.uuid, geneList=[gene1, gene2], minSize=0, maxSize=0, directed=directed, weightPropertyName=weightProperyName)
         except Exception as e:
             print(e)
             return None # Do we actually want to break here and terminate execution?
@@ -154,3 +154,29 @@ class Network(object):
     def getOptions(self):
         resp = self.sbml4jApi.getNetworkOptions(self.uuid)
         return resp
+
+    def filterUsingFilterOptions(self, filterDict, networkname=None, doPrefixName=None):
+        if not filterDict:
+            raise Exception("No data in filterDict. Provide at least one element in filterDict: nodeSymbols, nodeTypes, relationSymbols, relationTypes)")
+        else:
+            filterNodeSymbols = None
+            filterNodeTypes = None
+            filterRelationSymbols = None
+            filterRelationTypes = None
+            for (key, value) in filterDict.items():
+                #print("Checking {} with value {}".format(key, value))
+                if "nodeSymbols" == key:
+                    filterNodeSymbols = value
+                if "nodeTypes" == key:
+                    filterNodeTypes = value
+                if "relationSymbols" == key:
+                    filterRelationSymbols = value
+                if "relationTypes" == key:
+                    filterRelationTypes = value
+    
+            self.filter(filterNodeSymbols, filterNodeTypes, filterRelationSymbols, filterRelationTypes, networkname, doPrefixName)
+
+    def filter(self, nodeSymbols=None, nodeTypes=None, relationSymbols=None, relationTypes=None, networkname=None, doPrefixName=None):
+        dict_with_new_info = self.sbml4jApi.filterNetwork(self.uuid, nodeSymbols=nodeSymbols, nodeTypes=nodeTypes, relationSymbols=relationSymbols, relationTypes=relationTypes, networkname=networkname, doPrefixName=doPrefixName)
+        self.updateInfo(dict_with_new_info)
+

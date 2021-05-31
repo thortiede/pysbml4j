@@ -65,7 +65,8 @@ class Sbml4j(object):
             #print("Configuration out of sync. Refreshing network list.")
             self.refreshNetworkList()
             self._configuration.isInSync = True
-    
+    def version(self):
+        print("0.1.12")    
     ######################################## SBML methods #####################################################
     
     def uploadSBML(self, sbmlFiles, organism, datasource, datasourceVersion):
@@ -100,8 +101,9 @@ class Sbml4j(object):
                             raise Exception("Could not create resource. Reason: {}".format(response.headers['reason']))
                     else:
                         pathwayInventoryItemList = json.loads(response.data.decode('utf-8'))
-                        print(pathwayInventoryItemList)
-        return pathwayInventoryItemList
+                        #print(pathwayInventoryItemList)
+                        files_dict[file]=pathwayInventoryItemList[0]
+        return files_dict
  
 
     ######################################## Pathway methods #####################################################
@@ -272,13 +274,11 @@ class Sbml4j(object):
     
     def getNetworkByName(self, name):
         self.checkSyncStatus()
-        #print("Getting network with name {}".format(name))
         networkInfoDict = self._nameToNetworkMap[name].getInfoDict()
         return Network(networkInfoDict, self)   
     
-    def copyNetwork(self, uuid, newNetworkName=None, doPrefixName=None, doSuffixName=None):
+    def copyNetwork(self, uuid, networkname=None, doPrefixName=None, doSuffixName=None):
         self.checkSyncStatus()
-        #print("Headers for copy Request: {}".format(self._configuration.headers))
         baseUrl = "{}{}/networks?".format(
                     self._configuration.server, 
                     self._configuration.application_context)
@@ -286,8 +286,8 @@ class Sbml4j(object):
         # required arguments
         args_dict = {'parentUUID': uuid}
         # optional arguments
-        if newNetworkName != None:
-            args_dict['networkname'] = newNetworkName
+        if networkname != None:
+            args_dict['networkname'] = networkname
         if doPrefixName != None:
             args_dict['prefixName'] = doPrefixName
         if doSuffixName != None:
@@ -311,11 +311,8 @@ class Sbml4j(object):
             self.addNetwork(copiedNetworkDict)
             return copiedNetworkDict
        
-    def addCsvDataToNetwork(self, uuid, csvFile, dataName, newNetworkName=None, doPrefixName=None, doDerive=None):
+    def addCsvDataToNetwork(self, uuid, csvFile, dataName, networkname=None, doPrefixName=None, doDerive=None):
         self.checkSyncStatus()
-        #prior_content_type = self._configuration.content_type
-        #self._configuration.content_type = 'multipart/form-data'
-        print("Request headers: {}".format(self._configuration.headers))
         # build the url
         baseUrl = "{}{}/networks/{}/csv?".format(
                     self._configuration.server, 
@@ -324,8 +321,8 @@ class Sbml4j(object):
         # required arguments
         args_dict = {'type': dataName}
         # optional arguments
-        if newNetworkName != None:
-            args_dict['networkname'] = newNetworkName
+        if networkname != None:
+            args_dict['networkname'] = networkname
         if doPrefixName != None:
             args_dict['prefixName'] = doPrefixName
         if doDerive != None:
@@ -334,7 +331,6 @@ class Sbml4j(object):
         # encode the arguments
         encoded_args = urlencode(args_dict)
         urlString = baseUrl + encoded_args
-        print(urlString)
         with open(csvFile) as fp:
             file_data = fp.read()
            
@@ -357,7 +353,6 @@ class Sbml4j(object):
             return csvNetworkDict
 
         
-    # TODO: ADD weight parameter
     def getContext(self, 
                    uuid, 
                    geneList, 
@@ -365,37 +360,39 @@ class Sbml4j(object):
                    direction=None, 
                    minSize=None, 
                    maxSize=None, 
-                   directed=None):
+                   directed=None,
+                   weightPropertyName=None):
         self.checkSyncStatus()
         prior_accept = self._configuration.accept
         self._configuration.accept = "application/octet-stream"
-        #print("maxSize is: {}".format(maxSize))
         urlString = "{}{}/networks/{}/context".format(
                     self._configuration.server, 
                     self._configuration.application_context,
                     uuid)
-        fieldsDict = {}
+        fields_dict = {}
         
         # geneList must be list object
         if not isinstance(geneList, list):
             raise Exception("parameter geneList must be of type list, found {}".format (type(geneList)))
         else:
-            fieldsDict['genes'] = ", ".join(geneList)
+            fields_dict['genes'] = ", ".join(geneList)
         if minSize != None:
-            fieldsDict['minSize'] = minSize
+            fields_dict['minSize'] = minSize
         if maxSize != None:
-            fieldsDict['maxSize'] = maxSize
+            fields_dict['maxSize'] = maxSize
         if terminateAt != None:
-            fieldsDict['terminateAt'] = terminateAt
+            fields_dict['terminateAt'] = terminateAt
         if direction != None:
-            fieldsDict['direction'] = direction
+            fields_dict['direction'] = direction
         if directed != None:
-            fieldsDict['directed'] = directed
+            fields_dict['directed'] = directed
+        if weightPropertyName != None:
+            fields_dict['weightproperty'] = weightPropertyName 
         
         response = self._pm.request(
             "GET",
             urlString,
-            fields=fieldsDict,
+            fields=fields_dict,
             headers=self._configuration.headers
         )
         # reset the accept header to the state before this request
@@ -408,7 +405,6 @@ class Sbml4j(object):
         else:
             return response.data
         
-    # TODO: ADD weight parameter
     def postContext(self, 
                     uuid, 
                     geneList,  
@@ -416,8 +412,9 @@ class Sbml4j(object):
                     direction=None,
                     minSize=None, 
                     maxSize=None, 
-                    newNetworkName=None, 
-                    doPrefixName=None):
+                    networkname=None, 
+                    doPrefixName=None,
+                    weightPropertyName=None):
         self.checkSyncStatus()
         baseUrl = "{}{}/networks/{}/context".format(
                     self._configuration.server, 
@@ -437,17 +434,18 @@ class Sbml4j(object):
             args_dict['terminateAt'] = terminateAt
         if direction != None:
             args_dict['direction'] = direction
-        if newNetworkName != None:
-            args_dict['networkname'] = newNetworkName
+        if networkname != None:
+            args_dict['networkname'] = networkname
         if doPrefixName != None:
             args_dict['prefixName'] = doPrefixName
+        if weightPropertyName != None:
+            args_dict['weightproperty'] = weightPropertyName 
         
         if len(args_dict) > 0:
             baseUrl += "?"
         # encode the arguments
         encoded_args = urlencode(args_dict)
         urlString = baseUrl + encoded_args
-        print(urlString)
         # request body
         # geneList must be list object
         if not isinstance(geneList, list):
@@ -459,7 +457,6 @@ class Sbml4j(object):
         headers_dict = self._configuration.headers
         # our content does not get recognized as json, so we set the header explicitly
         headers_dict['Content-Type'] = 'application/json'
-        print("Headers for postContext: {}".format(headers_dict))
         
         # send the request
         response = self._pm.request(
@@ -515,8 +512,7 @@ class Sbml4j(object):
         baseUrl = "{}{}/networks/{}/options".format(
                     self._configuration.server, 
                     self._configuration.application_context,
-                    uuid)
-        
+                    uuid)        
         response = self._pm.request("GET", baseUrl,
                                    headers = self._configuration.headers)
         if response.status > 399:
@@ -527,9 +523,68 @@ class Sbml4j(object):
         else:
             return json.loads(response.data.decode("utf-8"))
     
-    def filterNetwork(self, uuid, filterOptions):
-        # TODO: implement
-        return None
+    def filterNetwork(self, uuid, networkname=None, doPrefixName=None, nodeSymbols=None, nodeTypes=None, relationSymbols=None, relationTypes=None):
+        self.checkSyncStatus()
+        baseUrl = "{}{}/networks/{}/filter".format(
+                    self._configuration.server, 
+                    self._configuration.application_context,
+                    uuid
+                    )
+        
+        # no required arguments
+        
+        args_dict = {}
+        # optional arguments
+        if networkname != None:
+            args_dict['networkname'] = networkname
+        if doPrefixName != None:
+            args_dict['prefixName'] = doPrefixName
+        
+        if len(args_dict) > 0:
+            baseUrl += "?"
+        # encode the arguments
+        encoded_args = urlencode(args_dict)
+        urlString = baseUrl + encoded_args
+        # request body
+        # filterOptions
+        if nodeSymbols==None and nodeTypes==None and relationSymbols==None and relationTypes==None:
+            raise Exception("At least one List (nodeSymbols, nodeTypes, relationSymbols, relationTypes, relationSymbols) has to be provided.")
+        else:
+            data = {} 
+            if nodeSymbols != None:
+                data['nodeSymbols'] = nodeSymbols
+            if nodeTypes != None:
+                data['nodeTypes'] = nodeTypes
+            if relationSymbols != None:
+                data['relationSymbols'] = relationSymbols
+            if relationTypes != None:
+                data['relationTypes'] = relationTypes
+            
+            if data:
+                encoded_data = json.dumps(data).encode('utf-8')
+                headers_dict = self._configuration.headers
+                # our content does not get recognized as json, so we set the header explicitly
+                headers_dict['Content-Type'] = 'application/json'
+        
+                # send the request
+                response = self._pm.request(
+                    "POST",
+                    urlString,
+                    body=encoded_data,
+                    headers=headers_dict
+                )
+                # reset the header as other requests cannot set it themselves otherwise
+                del headers_dict['Content-Type']
+                if response.status > 399:
+                    if not 'reason' in response.headers.keys():
+                        raise Exception("Unknown Error fetching resource: HttpStatus: {};\n Message: {}\n Header of response: {}".format(response.status, response.data, response.headers))
+                    else:
+                        raise Exception("Could not get resource. Reason: {}".format(response.headers['reason']))
+                else:
+                    filteredNetworkDict = json.loads(response.data.decode('utf-8'))
+                    self.addNetwork(filteredNetworkDict)
+                    return filteredNetworkDict  
+
         
     def annotateNetwork(self, uuid, annotationObject):
         # TODO: implement
