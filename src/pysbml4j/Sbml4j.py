@@ -66,7 +66,7 @@ class Sbml4j(object):
             self.refreshNetworkList()
             self._configuration.isInSync = True
     def version(self):
-        print("0.1.12")    
+        print("0.1.17")    
     ######################################## SBML methods #####################################################
     
     def uploadSBML(self, sbmlFiles, organism, datasource, datasourceVersion):
@@ -496,7 +496,7 @@ class Sbml4j(object):
                                     headers = self._configuration.headers)
         
         # reset the accept header to the state before this request
-        print("Previous accept is: {}".format(prior_accept))
+        #print("Previous accept is: {}".format(prior_accept))
         self._configuration.accept = prior_accept
         if response.status > 399:
             if response.headers['reason'] == None:
@@ -586,6 +586,70 @@ class Sbml4j(object):
                     return filteredNetworkDict  
 
         
-    def annotateNetwork(self, uuid, annotationObject):
-        # TODO: implement
-        return None
+    def annotateNetwork(self, uuid, annotationObject, networkname=None, doPrefixName=None):
+        self.checkSyncStatus()
+        baseUrl = "{}{}/networks/{}/annotation".format(
+                    self._configuration.server, 
+                    self._configuration.application_context,
+                    uuid
+                    )
+        
+        # no required arguments
+        
+        args_dict = {}
+        # optional arguments
+        if networkname != None:
+            args_dict['networkname'] = networkname
+        if doPrefixName != None:
+            args_dict['prefixName'] = doPrefixName
+        
+        if len(args_dict) > 0:
+            baseUrl += "?"
+        # encode the arguments
+        encoded_args = urlencode(args_dict)
+        urlString = baseUrl + encoded_args
+        # request body
+        # annotationOptions in annotationObject
+        doAnnotateNodes = False
+        doAnnotateRelations = False
+        if annotationObject.get('nodeAnnotationName'):
+            print("Annotation network nodes with annotation {}".format(annotationObject.get('nodeAnnotationName')))
+            doAnnotateNodes = True
+        if annotationObject.get('relationAnnotationName'):
+            print("Annotation network relations with annotation {}".format(annotationObject.get('relationAnnotationName')))
+            doAnnotateRelations = True
+        
+        data = {} 
+        if doAnnotateNodes and annotationObject.get('nodeAnnotationName') and annotationObject.get('nodeAnnotation'):
+            data['nodeAnnotationName'] = annotationObject.get('nodeAnnotationName')
+            data['nodeAnnotation'] = annotationObject.get('nodeAnnotation')
+        if doAnnotateRelations and annotationObject.get('relationAnnotationName') and annotationObject.get('relationAnnotation'):
+            data['relationAnnotationName'] = annotationObject.get('relationAnnotationName')
+            data['relationAnnotation'] = annotationObject.get('relationAnnotation')
+
+        if data:
+            encoded_data = json.dumps(data).encode('utf-8')
+            headers_dict = self._configuration.headers
+            # our content does not get recognized as json, so we set the header explicitly
+            headers_dict['Content-Type'] = 'application/json'
+        
+            # send the request
+            response = self._pm.request(
+                "POST",
+                urlString,
+                body=encoded_data,
+                headers=headers_dict
+            )
+            # reset the header as other requests cannot set it themselves otherwise
+            del headers_dict['Content-Type']
+            if response.status > 399:
+                if not 'reason' in response.headers.keys():
+                    raise Exception("Unknown Error fetching resource: HttpStatus: {};\n Message: {}\n Header of response: {}".format(response.status, response.data, response.headers))
+                else:
+                    raise Exception("Could not get resource. Reason: {}".format(response.headers['reason']))
+            else:
+               annotatedNetworkDict = json.loads(response.data.decode('utf-8'))
+               self.addNetwork(annotatedNetworkDict)
+               return annotatedNetworkDict  
+        else:
+            raise Exception("No annotation data found. Cannot annotate network.")

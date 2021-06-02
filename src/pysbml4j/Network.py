@@ -150,12 +150,34 @@ class Network(object):
                 return resp.decode('utf-8')
             else:
                 return resp.decode(coding)
-    
+    ###########
+    # Get available options for filtering and annotating the network
+    # This returns a dictionary containing two objects:
+    #   1. The filter object dictionary
+    #     It contains four elements declaring filtering of a network
+    #     1.1. Node Filtering
+    #     1.1.A nodeSymbols - A List containing all node symbols found in the network
+    #     1.1.B nodeTypes - A List containing all node types found in the network 
+    #     1.2.A relationSymbols - A List containing all relation symbols found in the network
+    #     1.2.B relationTypes - A List containing all relation types found in the network
+    #   2. The annotation object dictionary
+    #     It contains four elements for declaring annotations to be added to the network
+    #     2.1.A nodeAnnotationName - String item denoting the name of the annotation to be put on the nodes of the network
+    #                                If this is not filled (kept at None), no node annotation will be added, if this annotation object is sent back to the service
+    #     2.1.B nodeAnnotation - A dictionary where the keys are the node symbols of all nodes in the network and the values are of None-Type.
+    #                            When nodeAnnotationName is provided, the values for present keys are annotated under the given name
+    #     2.2.A relationAnnotationName - String item denoting the name of the annotation to be put on the relations of the network
+    #                                If this is not filled (kept at None), no relation annotation will be added, if this annotation object is sent back to the service
+    #     2.2.B relationAnnotation - A dictionary where the keys are the relation symbols of all relations in the network and the values are of None-Type.
+    #                            When relationAnnotationName is provided, the values for present keys are annotated under the given name
     def getOptions(self):
         resp = self.sbml4jApi.getNetworkOptions(self.uuid)
         return resp
 
-    def filterUsingFilterOptions(self, filterDict, networkname=None, doPrefixName=None):
+    ###########
+    # Filter this network according to the contents of the provided filterDict dictionary
+    # The filterDict dictionary can be obtained from the getOptions method (the filter object dictionary)
+    def filter(self, filterDict, networkname=None, doPrefixName=None):
         if not filterDict:
             raise Exception("No data in filterDict. Provide at least one element in filterDict: nodeSymbols, nodeTypes, relationSymbols, relationTypes)")
         else:
@@ -174,9 +196,28 @@ class Network(object):
                 if "relationTypes" == key:
                     filterRelationTypes = value
     
-            self.filter(filterNodeSymbols, filterNodeTypes, filterRelationSymbols, filterRelationTypes, networkname, doPrefixName)
+            dict_with_new_info = self.sbml4jApi.filterNetwork(self.uuid, nodeSymbols=filterNodeSymbols, nodeTypes=filterNodeTypes, relationSymbols=filterRelationSymbols, relationTypes=filterRelationTypes, networkname=networkname, doPrefixName=doPrefixName)
+            self.updateInfo(dict_with_new_info)
 
-    def filter(self, nodeSymbols=None, nodeTypes=None, relationSymbols=None, relationTypes=None, networkname=None, doPrefixName=None):
-        dict_with_new_info = self.sbml4jApi.filterNetwork(self.uuid, nodeSymbols=nodeSymbols, nodeTypes=nodeTypes, relationSymbols=relationSymbols, relationTypes=relationTypes, networkname=networkname, doPrefixName=doPrefixName)
-        self.updateInfo(dict_with_new_info)
+    ############
+    # Filter this network by any combination of input parameters nodeSymbols, nodeTypes, relationSymbols, relationTypes
+    # Any of these elements that is omitted will be filled in from the getOptions method
+    # This means that it allows all elements in the respective lists and does not filter out any of them except if the given filter criteria also rule them out
+    def filterBy(self, nodeSymbols=None, nodeTypes=None, relationSymbols=None, relationTypes=None, networkname=None, doPrefixName=None):
+        fullFilterOptions = self.getOptions().get('filter')
+        filterOptions = {}       
+        filterOptions['nodeSymbols'] = fullFilterOptions.get('nodeSymbols') if nodeSymbols == None else nodeSymbols
+        filterOptions['nodeTypes'] = fullFilterOptions.get('nodeTypes') if nodeTypes == None else nodeTypes
+        filterOptions['relationSymbols'] = fullFilterOptions.get('relationSymbols') if relationSymbols == None else relationSymbols
+        filterOptions['relationTypes'] = fullFilterOptions.get('relationTypes') if relationTypes == None else relationTypes
+        self.filter(filterOptions, networkname, doPrefixName)
 
+    ############
+    # Annotate this network using the elements in the annotationDict dictionary object
+    # The annotationDict dictionary can be obtained from the getOptions method (the annotation object dictionary)
+    def annotate(self, annotationDict, networkname=None, doPrefixName=None):
+        if not annotationDict:
+            raise Exception("No data in annotationDict. Provide either annotation information for nodes (nodeAnnotationName, nodeAnnotation), relations (relationAnnotationName, relationAnnotation) or both")
+        else:
+            dict_with_new_info = self.sbml4jApi.annotateNetwork(self.uuid, annotationDict, networkname, doPrefixName)
+            self.updateInfo(dict_with_new_info)
