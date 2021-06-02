@@ -1,3 +1,4 @@
+[![Documentation Status](https://readthedocs.org/projects/pysbml4j/badge/?version=latest)](https://pysbml4j.readthedocs.io/en/latest/?badge=latest)
 # SBML4j python package
 
 This is the python package to talk to a running SBML4j service instance.
@@ -6,7 +7,7 @@ This is the python package to talk to a running SBML4j service instance.
 This package is available through pip (Currently only on the test instance)
 To install use:
 	
-	pip install --index-url https://test.pypi.org/simple/ pysbml4j==0.1.0
+	pip install --index-url https://test.pypi.org/simple/ pysbml4j==0.1.17
 
 ## Usage
 In your python project use
