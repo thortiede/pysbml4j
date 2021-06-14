@@ -2,18 +2,13 @@ class Configuration(object):
     #_server=None
     #_user=None
     
-    def __init__(self, server=None, user=None):
-        if server == None:
-            self._server = "http://localhost:8080"
-        else:
-            self._server = server
-        self._application_context="/sbml4j"
-        #self._user = user
-        self._headers = {'Accept':'application/json'}
-        if user == None:
-            self._headers['user'] = "sbml4j"
-        else:
-            self._headers["user"] = user
+    def __init__(self, server="http://localhost", port=8080, application_context="/sbml4j", user="sbml4j"):
+        self._server = server
+        self._port = port
+        self._application_context = application_context
+        print("Server is: " + self._server + ":" + str(self._port) + self._application_context)
+        # Set headers
+        self._headers = {'Accept':'application/json', 'user':user}
         self._isInSync = False
     @property
     def isInSync(self):
@@ -33,8 +28,18 @@ class Configuration(object):
         self._isInSync=False
     
     @property
+    def port(self):
+        return self._port
+
+    @port.setter
+    def port(self, value):
+        self._port = value
+        self._isInSync=False
+
+    @property
     def application_context(self):
         return self._application_context
+    
     @application_context.setter
     def application_context(self, value):
         self._application_context = value
@@ -58,7 +63,11 @@ class Configuration(object):
     @accept.setter
     def accept(self, value):
         self._headers['Accept'] = value
-        
+
+    @property
+    def url(self):
+        url = self._server + ":" + str(self._port) + self._application_context
+        return url 
     #@property
     #def content_type(self):
     #    return self._headers['Content-Type']
@@ -68,4 +77,4 @@ class Configuration(object):
     
     
     def __str__(self):
-        return "Server: {}{} with headers: {}".format(self._server, self._application_context, self._headers)
+        return "Server: {}:{}{} with headers: {}".format(self._server, self._port, self._application_context, self._headers)

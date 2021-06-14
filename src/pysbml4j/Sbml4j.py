@@ -51,10 +51,6 @@ class Sbml4j(object):
     def nameToNetworkMap(self):
         return self._nameToNetworkMap
     
-    #@property
-    #def networkList(self):
-    #    return self._networkList
-    
     def refreshNetworkList(self):
         self._networkList = self.generateNetworkList()
         self._shortUuidToNetworkMap = self.generateNetworkMap('uuid')
@@ -66,14 +62,12 @@ class Sbml4j(object):
             self.refreshNetworkList()
             self._configuration.isInSync = True
     def version(self):
-        print("0.1.17")    
+        print("0.1.18")    
     ######################################## SBML methods #####################################################
     
     def uploadSBML(self, sbmlFiles, organism, datasource, datasourceVersion):
         self.checkSyncStatus()
-        baseUrl = "{}{}/sbml?".format(
-                    self._configuration.server, 
-                    self._configuration.application_context)
+        baseUrl = "{}/sbml?".format(self._configuration.url)
         # required arguments
         args_dict = {'organism': organism, 'source': datasource, 'version': datasourceVersion}
        
@@ -109,9 +103,7 @@ class Sbml4j(object):
     ######################################## Pathway methods #####################################################
 
     def pathwayList(self, hideCollections=None):
-        baseUrl = "{}{}/pathways".format(
-                    self._configuration.server, 
-                    self._configuration.application_context)
+        baseUrl = "{}/pathways".format(self._configuration.url)
         if hideCollections != None and (hideCollections == True or hideCollections == False):
             urlString = baseUrl + "?hideCollections=" + hideCollections
         else:
@@ -130,9 +122,7 @@ class Sbml4j(object):
 
         
     def pathwayUUIDs(self, hideCollections=None):
-        baseUrl = "{}{}/pathwayUUIDs".format(
-                    self._configuration.server, 
-                    self._configuration.application_context)
+        baseUrl = "{}/pathwayUUIDs".format(self._configuration.url)
         
         if hideCollections != None:
             if hideCollections == True:
@@ -156,9 +146,7 @@ class Sbml4j(object):
             return json.loads(response.data)
 
     def createPathwayCollection(self, collectionName, collectionDesc, pathways):
-        baseUrl = "{}{}/pathwayCollection".format(
-                    self._configuration.server, 
-                    self._configuration.application_context)
+        baseUrl = "{}/pathwayCollection".format(self._configuration.url)
         if not isinstance(pathways, list):
             raise Exception("parameter pathways must be of type list (of pathwayUUID-Strings), found {}".format (type(pathways)))
         else:
@@ -190,10 +178,7 @@ class Sbml4j(object):
             return response.data.decode('utf-8')
         
     def mapPathway(self, pathwayUUID, mappingType, networkname=None, doPrefixName=None, doSuffixName=None):
-        baseUrl = "{}{}/mapping/{}?".format(
-            self._configuration.server,
-            self._configuration.application_context,
-            pathwayUUID)
+        baseUrl = "{}/mapping/{}?".format(self._configuration.url, pathwayUUID)
             
         # required arguments
         args_dict = {'mappingType': mappingType}
@@ -253,9 +238,7 @@ class Sbml4j(object):
         return localMap
     
     def retrieveNetworkList(self):
-        response = self._pm.request("GET", "{}{}/networks".format(
-            self._configuration.server, 
-            self._configuration.application_context), 
+        response = self._pm.request("GET", "{}/networks".format(self._configuration.url), 
             headers = self._configuration.headers)
         return response
     
@@ -279,9 +262,7 @@ class Sbml4j(object):
     
     def copyNetwork(self, uuid, networkname=None, doPrefixName=None, doSuffixName=None):
         self.checkSyncStatus()
-        baseUrl = "{}{}/networks?".format(
-                    self._configuration.server, 
-                    self._configuration.application_context)
+        baseUrl = "{}/networks?".format(self._configuration.url) 
         
         # required arguments
         args_dict = {'parentUUID': uuid}
@@ -314,9 +295,8 @@ class Sbml4j(object):
     def addCsvDataToNetwork(self, uuid, csvFile, dataName, networkname=None, doPrefixName=None, doDerive=None):
         self.checkSyncStatus()
         # build the url
-        baseUrl = "{}{}/networks/{}/csv?".format(
-                    self._configuration.server, 
-                    self._configuration.application_context,
+        baseUrl = "{}/networks/{}/csv?".format(
+                    self._configuration.url, 
                     uuid)
         # required arguments
         args_dict = {'type': dataName}
@@ -365,9 +345,8 @@ class Sbml4j(object):
         self.checkSyncStatus()
         prior_accept = self._configuration.accept
         self._configuration.accept = "application/octet-stream"
-        urlString = "{}{}/networks/{}/context".format(
-                    self._configuration.server, 
-                    self._configuration.application_context,
+        urlString = "{}/networks/{}/context".format(
+                    self._configuration.uuid, 
                     uuid)
         fields_dict = {}
         
@@ -416,9 +395,8 @@ class Sbml4j(object):
                     doPrefixName=None,
                     weightPropertyName=None):
         self.checkSyncStatus()
-        baseUrl = "{}{}/networks/{}/context".format(
-                    self._configuration.server, 
-                    self._configuration.application_context,
+        baseUrl = "{}/networks/{}/context".format(
+                    self._configuration.url, 
                     uuid
                     )
         
@@ -480,9 +458,8 @@ class Sbml4j(object):
             
     def getNetworkGraphML(self, network, directed=None):
         self.checkSyncStatus()
-        baseUrl = "{}{}/networks/{}".format(
-                    self._configuration.server, 
-                    self._configuration.application_context,
+        baseUrl = "{}/networks/{}".format(
+                    self._configuration.url, 
                     network.uuid)
         if directed != None:
             urlString = baseUrl + "?directed={}".format(directed)
@@ -509,9 +486,8 @@ class Sbml4j(object):
         
     def getNetworkOptions(self, uuid):
         self.checkSyncStatus()
-        baseUrl = "{}{}/networks/{}/options".format(
-                    self._configuration.server, 
-                    self._configuration.application_context,
+        baseUrl = "{}/networks/{}/options".format(
+                    self._configuration.url, 
                     uuid)        
         response = self._pm.request("GET", baseUrl,
                                    headers = self._configuration.headers)
@@ -525,9 +501,8 @@ class Sbml4j(object):
     
     def filterNetwork(self, uuid, networkname=None, doPrefixName=None, nodeSymbols=None, nodeTypes=None, relationSymbols=None, relationTypes=None):
         self.checkSyncStatus()
-        baseUrl = "{}{}/networks/{}/filter".format(
-                    self._configuration.server, 
-                    self._configuration.application_context,
+        baseUrl = "{}/networks/{}/filter".format(
+                    self._configuration.url, 
                     uuid
                     )
         
@@ -588,9 +563,8 @@ class Sbml4j(object):
         
     def annotateNetwork(self, uuid, annotationObject, networkname=None, doPrefixName=None):
         self.checkSyncStatus()
-        baseUrl = "{}{}/networks/{}/annotation".format(
-                    self._configuration.server, 
-                    self._configuration.application_context,
+        baseUrl = "{}/networks/{}/annotation".format(
+                    self._configuration.url, 
                     uuid
                     )
         
