@@ -61,8 +61,6 @@ class Sbml4j(object):
             #print("Configuration out of sync. Refreshing network list.")
             self.refreshNetworkList()
             self._configuration.isInSync = True
-    def version(self):
-        print("0.1.18")    
     ######################################## SBML methods #####################################################
     
     def uploadSBML(self, sbmlFiles, organism, datasource, datasourceVersion):
