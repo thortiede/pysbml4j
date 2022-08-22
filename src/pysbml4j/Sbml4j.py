@@ -94,6 +94,54 @@ class Sbml4j(object):
                         files_dict[file]=pathwayInventoryItemList[0]
         return files_dict
 
+    ######################################## GraphML methods #####################################################
+    
+    def uploadGraphML(self, graphMLFiles, parentUUID=None, networkname=None, doPrefixName=None, doSuffixName=None):
+        self.checkSyncStatus()
+        baseUrl = "{}/graphml?".format(self._configuration.url)
+        # required arguments
+        args_dict = {}
+        # optional arguments
+        if parentUUID != None:
+            args_dict['parentUUID'] = parentUUID
+        if networkname != None:
+            args_dict['networkname'] = networkname
+        if doPrefixName != None:
+            args_dict['prefixName'] = doPrefixName
+        if doSuffixName != None:
+            args_dict['suffixName'] = doSuffixName
+    
+        urlString = baseUrl
+        if len(args_dict) > 0:
+            # encode the arguments
+            encoded_args = urlencode(args_dict)
+            urlString = urlString + encoded_args
+    
+        if not isinstance(graphMLFiles, list):
+            graphMLFiles = [graphMLFiles]
+            
+        if isinstance(graphMLFiles, list):
+            files_dict = {}
+            for file in graphMLFiles:
+                with open(file) as graphml:
+                    response = self._pm.request(
+                        "POST",
+                        urlString,
+                        fields={
+                            'files': (os.path.basename(graphml.name), graphml.read())
+                        },
+                        headers = self._configuration.headers
+                    )
+                    if response.status > 399:
+                        if not 'reason' in response.headers.keys():
+                            raise Exception("Unknown Error fetching resource: HttpStatus: {}; Header of response: {}".format(response.status, response.headers))
+                        else:
+                            raise Exception("Could not create resource. Reason: {}".format(response.headers['reason']))
+                    else:
+                        pathwayInventoryItemList = json.loads(response.data.decode('utf-8'))
+                        files_dict[file]=pathwayInventoryItemList[0]
+        return files_dict
+
 
     ######################################## Pathway methods #####################################################
 
