@@ -38,15 +38,14 @@ The Constructor of the *Configuration* class allows the following arguments:
 
 ========== ========= ================
 param-name data-type default-value
-========== ========= ================
-server     string    http://localhost
-port       integer   8080
-context    string    /sbml4j
-user       string    sbml4j
-========== ========= ================
+=================== ========= ================
+server              string    http://localhost
+port                integer   8080
+application_context string    /sbml4j
+user                string    sbml4j
+=================== ========= ================
 
 If you omit any of these parameters the default-values will be used.
-
 
 Setting the server
 ------------------
@@ -55,7 +54,7 @@ Create an instance of the Configuration and pass the server address:
 
 .. code-block:: python
 
-   conf = Configuration("https://sbml4j.informatik.uni-tuebingen.de:8989")
+   conf = Configuration(server="https://sbml4j.informatik.uni-tuebingen.de", port=8989)
 
 Pass this configuration to Sbml4j upon instantiation:
 
@@ -67,7 +66,7 @@ or create the configuration in-line:
 
 .. code-block:: python
 
-   client = Sbml4j(Configuration("https://sbml4j.informatik.uni-tuebingen.de:8989"))
+   client = Sbml4j(Configuration(server="https://sbml4j.informatik.uni-tuebingen.de", port=8989))
 
 
 
