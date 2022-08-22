@@ -40,7 +40,6 @@ class Sbml4j(object):
         return self._configuration.user
     @user.setter
     def user(self, value):
-        print("Setting user to {}".format(value))
         self._configuration.user = value
 
     @property
@@ -72,7 +71,6 @@ class Sbml4j(object):
         # encode the arguments
         encoded_args = urlencode(args_dict)
         urlString = baseUrl + encoded_args
-        print(urlString)
 
         if isinstance(sbmlFiles, list):
             files_dict = {}
@@ -93,7 +91,6 @@ class Sbml4j(object):
                             raise Exception("Could not create resource. Reason: {}".format(response.headers['reason']))
                     else:
                         pathwayInventoryItemList = json.loads(response.data.decode('utf-8'))
-                        #print(pathwayInventoryItemList)
                         files_dict[file]=pathwayInventoryItemList[0]
         return files_dict
 
@@ -156,7 +153,6 @@ class Sbml4j(object):
         headers_dict = self._configuration.headers
         # our content does not get recognized as json, so we set the header explicitly
         headers_dict['Content-Type'] = 'application/json'
-        #print("Headers for postContext: {}".format(headers_dict))
 
         # send the request
         response = self._pm.request(
@@ -222,11 +218,9 @@ class Sbml4j(object):
             raise Exception("Cannot add {} to list of networks.\n Expected type Network or dict of a network or list of Network entities or list of dicts of networks, found {}".format(value, type(value)))
 
     def generateNetworkList(self):
-        #print("Fetching available networks..")
         return [Network(netInvItem, self) for netInvItem in json.loads(self.retrieveNetworkList().data)]
 
     def generateNetworkMap(self, key):
-        #print("Populating network map for {}".format(key))
         localMap = {}
         for netItem in self._networkList:
             if (key=="uuid"):
@@ -241,15 +235,16 @@ class Sbml4j(object):
         return response
 
     def listNetworks(self):
-        #for shortId, net in self._shortUuidToNetworkMap.items():
-        #    print("{}: {}".format(shortId, net))
         self.checkSyncStatus()
         for name, net in self._nameToNetworkMap.items():
             print("{}: {}".format(name, net))
 
+    def getNetworks(self):
+        self.checkSyncStatus()
+        return self._nameToNetworkMap
+
     def getNetwork(self, uuid):
         self.checkSyncStatus()
-        print("Getting network with id {}".format(uuid))
         networkInfoDict = self._shortUuidToNetworkMap[uuid[:8]].getInfoDict()
         return Network(networkInfoDict, self)
 
@@ -285,7 +280,6 @@ class Sbml4j(object):
             else:
                 raise Exception("Could not create resource. Reason: {}".format(response.headers['reason']))
         else:
-            #print (json.loads(response.data.decode("utf-8")))
             copiedNetworkDict = json.loads(response.data.decode("utf-8"))
             self.addNetwork(copiedNetworkDict)
             return copiedNetworkDict
@@ -585,10 +579,8 @@ class Sbml4j(object):
         doAnnotateNodes = False
         doAnnotateRelations = False
         if annotationObject.get('nodeAnnotationName'):
-            print("Annotation network nodes with annotation {}".format(annotationObject.get('nodeAnnotationName')))
             doAnnotateNodes = True
         if annotationObject.get('relationAnnotationName'):
-            print("Annotation network relations with annotation {}".format(annotationObject.get('relationAnnotationName')))
             doAnnotateRelations = True
 
         data = {}
