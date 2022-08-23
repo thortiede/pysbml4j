@@ -94,6 +94,58 @@ class Sbml4j(object):
                         files_dict[file]=pathwayInventoryItemList[0]
         return files_dict
 
+
+    def getEntityInfo(self, geneSymbol):
+        self.checkSyncStatus()
+        baseUrl = "{}/entityInfo?".format(self._configuration.url)
+        if isinstance(geneSymbol, list):
+            geneSymbolParam = ",".join(geneSymbol)
+        else:
+            geneSymbolParam = geneSymbol
+        args_dict = {'geneSymbol': geneSymbolParam}
+        
+        # encode the arguments
+        encoded_args = urlencode(args_dict)
+        urlString = baseUrl + encoded_args
+        response = self._pm.request("GET", urlString,
+                                   headers=self._configuration.headers)
+        
+        if response.status > 399:
+            if not 'reason' in response.headers.keys():
+                raise Exception("Unknown Error fetching resource: HttpStatus: {}; Header of response: {}".format(response.status, response.headers))
+            else:
+                raise Exception("Could not fetch resource. Reason: {}".format(response.headers['reason']))
+        else:
+            return json.loads(response.data.decode('utf-8'))
+    
+    
+    def getIdMap(self, symbol, separator=",", idSystem=None):
+        self.checkSyncStatus()
+        baseUrl = "{}/idMap?".format(self._configuration.url)
+        
+        if isinstance(symbol, list):
+            symbolParam = separator.join(symbol)
+        else:
+            symbolParam = symbol
+        args_dict = {'symbol': symbolParam, 'separator': separator}
+        
+        if idSystem != None:
+            args_dict['idSystem'] = idSystem
+        
+        
+        # encode the arguments
+        encoded_args = urlencode(args_dict)
+        urlString = baseUrl + encoded_args
+        response = self._pm.request("GET", urlString,
+                                   headers=self._configuration.headers)
+        
+        if response.status > 399:
+            if not 'reason' in response.headers.keys():
+                raise Exception("Unknown Error fetching resource: HttpStatus: {}; Header of response: {}".format(response.status, response.headers))
+            else:
+                raise Exception("Could not fetch resource. Reason: {}".format(response.headers['reason']))
+        else:
+            return json.loads(response.data.decode('utf-8'))
     ######################################## GraphML methods #####################################################
     
     def uploadGraphML(self, graphMLFiles, parentUUID=None, networkname=None, doPrefixName=None, doSuffixName=None):
