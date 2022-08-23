@@ -214,3 +214,27 @@ class Network(object):
         else:
             dict_with_new_info = self.sbml4jApi.annotateNetwork(self.uuid, annotationDict, networkname, doPrefixName)
             self.updateInfo(dict_with_new_info)
+
+    ############
+    # Add free form provenance information to the network
+    # Must provide a name for the provenance item
+    # Must provide a dictionary of data as jsonBody
+    def addProvenance(self, name, jsonBody):
+        try:
+            resp = self.sbml4jApi.addProvenanceToNetwork(self.uuid, name, jsonBody)
+        except Exception as e:
+            print(e)
+            return False
+        else:
+            return resp
+        
+    ############
+    # Retrieve the provenanceReport for the network
+    def getProvenance(self):
+        try:
+            resp = self.sbml4jApi.getProvenanceForNetwork(self.uuid)
+        except Exception as e:
+            print(e)
+            return False
+        else:
+            return resp
