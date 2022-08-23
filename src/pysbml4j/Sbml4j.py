@@ -120,27 +120,27 @@ class Sbml4j(object):
         if not isinstance(graphMLFiles, list):
             graphMLFiles = [graphMLFiles]
             
-        if isinstance(graphMLFiles, list):
-            files_dict = {}
-            for file in graphMLFiles:
-                with open(file) as graphml:
-                    response = self._pm.request(
-                        "POST",
-                        urlString,
-                        fields={
-                            'files': (os.path.basename(graphml.name), graphml.read())
-                        },
-                        headers = self._configuration.headers
-                    )
-                    if response.status > 399:
-                        if not 'reason' in response.headers.keys():
-                            raise Exception("Unknown Error fetching resource: HttpStatus: {}; Header of response: {}".format(response.status, response.headers))
-                        else:
-                            raise Exception("Could not create resource. Reason: {}".format(response.headers['reason']))
+        files_dict = {}
+        for file in graphMLFiles:
+            with open(file) as graphml:
+                response = self._pm.request(
+                    "POST",
+                    urlString,
+                    fields={
+                        'files': (os.path.basename(graphml.name), graphml.read())
+                    },
+                    headers = self._configuration.headers
+                )
+                if response.status > 399:
+                    if not 'reason' in response.headers.keys():
+                        raise Exception("Unknown Error fetching resource: HttpStatus: {}; Header of response: {}".format(response.status, response.headers))
                     else:
-                        pathwayInventoryItemList = json.loads(response.data.decode('utf-8'))
-                        files_dict[file]=pathwayInventoryItemList[0]
-        return files_dict
+                        raise Exception("Could not create resource. Reason: {}".format(response.headers['reason']))
+                else:
+                    networkInventoryItemList = json.loads(response.data.decode('utf-8'))
+                    files_dict[file]=networkInventoryItemList[0]
+        self._configuration.isInSync=False
+        return json.loads(response.data.decode('utf-8'))
 
 
     ######################################## Pathway methods #####################################################
