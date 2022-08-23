@@ -32,18 +32,11 @@ class Network(object):
         self.uuid = dict_with_info['uuid']
         self.name = dict_with_info['name']
         self.organism_code = dict_with_info['organismCode']
-        self.numberOfNodes = dict_with_info['numberOfNodes'] if dict_with_info['numberOfNodes'] != None else 0
-        try:
-            self.numberOfRelations = dict_with_info['numberOfRelations']
-        except:
-            self.numberOfRelations = 0
-        try:
-            self.numberOfReactions = dict_with_info['numberOfReactions']
-        except:
-            self.numberOfReactions = 0
-
-        self.nodeTypes = dict_with_info['nodeTypes']
-        self.relationTypes = dict_with_info['relationTypes']
+        self.numberOfNodes = dict_with_info['numberOfNodes'] if 'numberOfNodes' in dict_with_info and dict_with_info['numberOfNodes'] != None else 0
+        self.numberOfRelations = dict_with_info['numberOfRelations'] if 'numberOfRelations' in dict_with_info and dict_with_info['numberOfRelations'] != None else 0
+        self.numberOfReactions = dict_with_info['numberOfReactions'] if 'numberOfReactions' in dict_with_info and dict_with_info['numberOfReactions'] != None else 0
+        self.nodeTypes = dict_with_info['nodeTypes'] if 'nodeTypes' in dict_with_info and dict_with_info['nodeTypes'] != None else list()
+        self.relationTypes = dict_with_info['relationTypes'] if 'relationTypes' in dict_with_info and dict_with_info['relationTypes'] != None else list()
         self.networkMappingType = dict_with_info['networkMappingType']
     
     def getInfoDict(self):
