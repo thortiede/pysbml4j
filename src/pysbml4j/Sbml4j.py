@@ -765,4 +765,19 @@ class Sbml4j(object):
        
         
     # retrieve provenance report for network
-    
+    def getProvenanceForNetwork(self, uuid):
+        self.checkSyncStatus()
+        baseUrl = "{}/networks/{}/prov".format(
+                    self._configuration.url,
+                    uuid
+                    )
+        response = self._pm.request("GET", baseUrl,
+                                   headers = self._configuration.headers)
+        if response.status > 399:
+            if response.headers['reason'] == None:
+                raise Exception("Unknown Error fetching resource: HttpStatus: {}; Header of response: {}".format(response.status, response.headers))
+            else:
+                raise Exception("Could not get resource. Reason: {}".format(response.headers['reason']))
+        else:
+            return json.loads(response.data.decode("utf-8"))
+        

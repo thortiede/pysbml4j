@@ -227,3 +227,14 @@ class Network(object):
             return False
         else:
             return resp
+        
+    ############
+    # Retrieve the provenanceReport for the network
+    def getProvenance(self):
+        try:
+            resp = self.sbml4jApi.getProvenanceForNetwork(self.uuid)
+        except Exception as e:
+            print(e)
+            return False
+        else:
+            return resp
