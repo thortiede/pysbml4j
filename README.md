@@ -4,14 +4,14 @@
 This is the python package to talk to a running SBML4j service instance.
 
 ## Install
-This package is available through pip (Currently only on the test instance)
+This package is available through pip
 To install use:
-	
-	pip install --index-url https://test.pypi.org/simple/ pysbml4j==0.1.17
+
+	pip install pysbml4j
 
 ## Usage
 In your python project use
-	 
+
 >	import pysbml4j
 >
 >	client = pysbml4j.Sbml4j()
@@ -47,7 +47,7 @@ You can get a basic information dictionary for a network with
 To get a graphML Representation use:
 
 	graphMLString = myNet.graphML()
-	
+
 You can provide the 'directed' attribute (true, false) to determine whether the resulting graph should be directed or not. The default is 'false'
 
 
@@ -55,5 +55,3 @@ There are more options, which I will provide documentation for shortly.
 Stay tuned.
 
 To find out more about SBML4j visit the [kohlbacherlab github repository](https://github.com/kohlbacherlab/sbml4j.git)
-
-
