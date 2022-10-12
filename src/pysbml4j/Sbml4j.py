@@ -60,6 +60,7 @@ class Sbml4j(object):
             #print("Configuration out of sync. Refreshing network list.")
             self.refreshNetworkList()
             self._configuration.isInSync = True
+            
     ######################################## SBML methods #####################################################
 
     def uploadSBML(self, sbmlFiles, organism, datasource, datasourceVersion):
@@ -146,6 +147,7 @@ class Sbml4j(object):
                 raise Exception("Could not fetch resource. Reason: {}".format(response.headers['reason']))
         else:
             return json.loads(response.data.decode('utf-8'))
+        
     ######################################## GraphML methods #####################################################
     
     def uploadGraphML(self, graphMLFiles, parentUUID=None, networkname=None, doPrefixName=None, doSuffixName=None):
@@ -194,6 +196,63 @@ class Sbml4j(object):
         self._configuration.isInSync=False
         return json.loads(response.data.decode('utf-8'))
 
+    ####################################### Provenance methods ###################################################
+
+    def getProvenance(self, uuid, user):
+        baseUrl = "{}/prov/{}".format(self._configuration.url, uuid)
+        
+        response = self._pm.request("GET", baseUrl,
+                                    headers=self._configuration.headers)
+        if response.status > 399:
+            if not 'reason' in response.headers.keys():
+                raise Exception("Unknown Error fetching resource: HttpStatus: {}; Header of response: {}".format(response.status, response.headers))
+            else:
+                raise Exception("Could not fetch resource. Reason: {}".format(response.headers['reason']))
+        else:
+            return json.loads(response.data.decode("utf-8"))
+        
+    def addProvenace(self, uuid, name, jsonBody):
+        self.checkSyncStatus()
+        
+        # requestBody (needs to be json, and we simply use the dumps method to convert the provided data into json)
+        if not isinstance(jsonBody , dict):
+            raise Exception("jsonBody method parameter needs to be a dictionary type.")
+        
+        baseUrl = "{}/prov/{}?".format(
+                    self._configuration.url,
+                    uuid
+                    )
+        # required arguments
+        args_dict = {'name': name}
+        
+        # encode the arguments
+        encoded_args = urlencode(args_dict)
+        urlString = baseUrl + encoded_args
+
+        encoded_data = json.dumps(jsonBody).encode('utf-8')
+        headers_dict = self._configuration.headers
+        # our content does not get recognized as json, so we set the header explicitly
+        headers_dict['Content-Type'] = 'application/json'
+        
+        # send the request
+        response = self._pm.request(
+            "PUT",
+            urlString,
+            body=encoded_data,
+            headers=headers_dict
+        )
+                
+        # reset the header as other requests cannot set it themselves otherwise
+        del headers_dict['Content-Type']
+        
+        if response.status > 399:
+            if not 'reason' in response.headers.keys():
+                raise Exception("Unknown Error fetching resource: HttpStatus: {};\n Message: {}\n Header of response: {}".format(response.status, response.data, response.headers))
+            else:
+                raise Exception("Could not get resource. Reason: {}".format(response.headers['reason']))
+        else:
+           provenanceInfoItem = json.loads(response.data.decode('utf-8'))
+           return provenanceInfoItem
 
     ######################################## Pathway methods #####################################################
 
@@ -772,6 +831,46 @@ class Sbml4j(object):
                     uuid
                     )
         response = self._pm.request("GET", baseUrl,
+                                   headers = self._configuration.headers)
+        if response.status > 399:
+            if response.headers['reason'] == None:
+                raise Exception("Unknown Error fetching resource: HttpStatus: {}; Header of response: {}".format(response.status, response.headers))
+            else:
+                raise Exception("Could not get resource. Reason: {}".format(response.headers['reason']))
+        else:
+            return json.loads(response.data.decode("utf-8"))
+        
+        
+    ######################################## Warehouse methods #####################################################
+    
+    def getFileorigin(self, uuid):
+        self.checkSyncStatus()
+        baseUrl = "{}/fileorigin/{}".format(
+                    self._configuration.url,
+                    uuid
+                    )
+        response = self._pm.request("GET", baseUrl,
+                                   headers = self._configuration.headers)
+        if response.status > 399:
+            if response.headers['reason'] == None:
+                raise Exception("Unknown Error fetching resource: HttpStatus: {}; Header of response: {}".format(response.status, response.headers))
+            else:
+                raise Exception("Could not get resource. Reason: {}".format(response.headers['reason']))
+        else:
+            return json.loads(response.data.decode("utf-8"))
+        
+    def getDatabaseUUID(self, orgCode, source, version):
+        self.checkSyncStatus()
+        baseUrl = "{}/databaseUUID?".format(
+                    self._configuration.url)
+    
+        # required arguments
+        args_dict = {'organism': orgCode, "source": source, "version": version}
+        # encode the arguments
+        encoded_args = urlencode(args_dict)
+        urlString = baseUrl + encoded_args
+        
+        response = self._pm.request("GET", urlString,
                                    headers = self._configuration.headers)
         if response.status > 399:
             if response.headers['reason'] == None:
