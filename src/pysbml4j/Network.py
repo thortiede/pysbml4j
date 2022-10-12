@@ -88,8 +88,8 @@ class Network(object):
     # all additional columns get added as annotations to the nodes
     # The given dataName will be added as Label to the gene-node and can be used in context searches
     # A name can be given to the resulting network, if ommited the old network name will prefixed with "Added_{dataName}_to_"
-    def addCsvData(self, csvFile, dataName, networkname=None, doPrefixName=None, doDerive=None):
-        dict_with_new_info = self.sbml4jApi.addCsvDataToNetwork(self.uuid, csvFile, dataName, networkname, doPrefixName, doDerive)
+    def addCsvData(self, csvFile, dataName, networkname=None, doPrefixName=None, match=None, doDerive=None):
+        dict_with_new_info = self.sbml4jApi.addCsvDataToNetwork(self.uuid, csvFile, dataName, networkname, doPrefixName, match, doDerive)
         self.updateInfo(dict_with_new_info)
         
     ############
@@ -134,7 +134,7 @@ class Network(object):
     # With a size of zero, it results in only the shortest path between the two genes
     def shortestPath(self, gene1, gene2, directed=None, weightPropertyName=None, coding=None):
         try:
-            resp = self.sbml4jApi.getContext(uuid=self.uuid, geneList=[gene1, gene2], minSize=0, maxSize=0, directed=directed, weightPropertyName=weightProperyName)
+            resp = self.sbml4jApi.getContext(uuid=self.uuid, geneList=[gene1, gene2], minSize=0, maxSize=0, directed=directed, weightPropertyName=weightPropertyName)
         except Exception as e:
             print(e)
             return None # Do we actually want to break here and terminate execution?

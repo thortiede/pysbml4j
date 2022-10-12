@@ -443,7 +443,7 @@ class Sbml4j(object):
             self.addNetwork(copiedNetworkDict)
             return copiedNetworkDict
 
-    def addCsvDataToNetwork(self, uuid, csvFile, dataName, networkname=None, doPrefixName=None, doDerive=None):
+    def addCsvDataToNetwork(self, uuid, csvFile, dataName, networkname=None, doPrefixName=None, match=None, doDerive=None):
         self.checkSyncStatus()
         # build the url
         baseUrl = "{}/networks/{}/csv?".format(
@@ -456,6 +456,8 @@ class Sbml4j(object):
             args_dict['networkname'] = networkname
         if doPrefixName != None:
             args_dict['prefixName'] = doPrefixName
+        if match != None:
+            args_dict['match'] = match
         if doDerive != None:
             args_dict['derive'] = doDerive
 
