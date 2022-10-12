@@ -211,7 +211,7 @@ class Sbml4j(object):
         else:
             return json.loads(response.data.decode("utf-8"))
         
-    def addProvenace(self, uuid, name, jsonBody):
+    def addProvenance(self, uuid, name, jsonBody):
         self.checkSyncStatus()
         
         # requestBody (needs to be json, and we simply use the dumps method to convert the provided data into json)
